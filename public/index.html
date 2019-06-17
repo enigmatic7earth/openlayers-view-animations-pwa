@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>OpenLayers: View animations PWA</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Add link rel manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!--Add iOS meta tags and icons -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="ol_View Animations PWA">
+    <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png">
+
+    <!-- description -->
+    <meta name="description" content="OpenLayers View Animations PWA">
+    <!-- meta theme-color -->
+    <meta name="theme-color" content="#aad2dd" />
+    
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
+    <link rel="stylesheet" href="/style.css">
+    
+    <!-- import the webpage's javascript file -->
+<!--     <script src="/script.js" defer></script> -->
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+  </head>  
+  <body bgcolor= "#e5e5e5" >
+    <header class="header">
+    <h1>
+      OpenLayers:View Animation PWA
+      <a href="https://glitch.com/@enigmatic7earth" class="powered-by">
+        Prashant@glitch
+      </a>
+    </h1>
+    <button id="butInstall" aria-label="Install" hidden></button>
+  </header>
+  <script src="/scripts/install.js"></script>
+		<br/><br/><br/>
+    <div id="map" class="map"></div>
+    <script type="text/javascript">
+      var view = new ol.View({
+                  center: ol.proj.fromLonLat([72.854118,19.228825]),
+                  zoom: 6
+                })
+      //<!--Map start-->
+      var map = new ol.Map({
+        target: 'map',
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM()
+          })
+        ],
+        loadTilesWhileAnimating: true,
+        view: view
+      });
+      // Vector source and layer 
+      //<!-- start -->
+      const source = new ol.source.Vector();
+      const layer = new ol.layer.Vector({
+        source: source
+      });
+      map.addLayer(layer);
+      //<!--Map end-->
+      
+      // Code snippet that gets the location and its accuracy from the browser's Geolocation API
+      //*****Geo location*****//
+      //<!-- start -->
+
+      navigator.geolocation.watchPosition(function(pos) {
+        const coords = [pos.coords.longitude, pos.coords.latitude];
+        const accuracy = new ol.geom.Polygon.circular(coords, pos.coords.accuracy);
+        source.clear(true);
+        source.addFeatures([
+          new ol.Feature(accuracy.transform('EPSG:4326', map.getView().getProjection())),
+          new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(coords)))
+        ]);
+      }, function(error) {
+        alert(`ERROR: ${error.message}`);
+      }, {
+        enableHighAccuracy: true
+      });
+
+      //<!-- end -->
+      
+      //***** Locations *****//
+      var london = ol.proj.fromLonLat([-0.12755, 51.507222]);
+      var moscow = ol.proj.fromLonLat([37.6178, 55.7517]);
+      var istanbul = ol.proj.fromLonLat([28.9744, 41.0128]);
+      var rome = ol.proj.fromLonLat([12.5, 41.9]);
+      var bern = ol.proj.fromLonLat([7.4458, 46.95]);
+      var mumbai = ol.proj.fromLonLat([72.854118,19.228825]);
+      
+      //***** Map Controls *****//
+      
+      //*** Location control ***//
+      //<!-- start -->
+      const locate = document.createElement('div');
+      locate.className = 'ol-control ol-unselectable locate';
+      locate.innerHTML = '<button title="Locate me">◎</button>';
+      locate.addEventListener('click', locate_me);
+      map.addControl(new ol.control.Control({
+        element: locate
+      }));
+      //<!-- end -->
+      
+      // Rotate Clockwise button//
+      //<!-- start -->
+      const rotate_cl = document.createElement('div');
+      rotate_cl.className = 'ol-control ol-unselectable rot_cl';
+      rotate_cl.innerHTML = '<button title="Rotate clockwise">↻</button>';
+      rotate_cl.addEventListener('click',rotate_clockwise);
+      map.addControl(new ol.control.Control({
+        element: rotate_cl
+      }));
+      //<!-- end -->
+      
+      // Rotate AntiClockwise button//
+      //<!-- start -->
+      const rotate_acl = document.createElement('div');
+      rotate_acl.className = 'ol-control ol-unselectable rot_acl';
+      rotate_acl.innerHTML = '<button title="Rotate counterclockwise">↺</button>';
+      rotate_acl.addEventListener('click',rotate_counterclockwise);
+      map.addControl(new ol.control.Control({
+        element: rotate_acl
+      }));
+      //<!-- end -->
+      
+      // Tour button//
+      //<!-- start -->
+      const tour_b = document.createElement('div');
+      tour_b.className = 'ol-control ol-unselectable tour';
+      tour_b.innerHTML = '<button title="Take a tour!">𝐓</button>';
+      tour_b.addEventListener('click',tour);
+      map.addControl(new ol.control.Control({
+        element: tour_b
+      }));
+      //<!-- end -->
+      
+      // Pan to London button//
+      //<!-- start -->
+      const lon_b = document.createElement('div');
+      lon_b.className = 'ol-control ol-unselectable lon';
+      lon_b.innerHTML = '<button title="Pan to London">🇬🇧</button>';
+      lon_b.addEventListener('click',pan_to_london);
+      map.addControl(new ol.control.Control({
+        element: lon_b
+      }));
+      //<!-- end -->
+      
+      // Elastic to Moscow button//
+      //<!-- start -->
+      const mos_b = document.createElement('div');
+      mos_b.className = 'ol-control ol-unselectable mos';
+      mos_b.innerHTML = '<button title="Elastic to Moscow">🇷🇺</button>';
+      mos_b.addEventListener('click',elastic_to_moscow);
+      map.addControl(new ol.control.Control({
+        element: mos_b
+      }));
+      //<!-- end -->
+      
+      // Bounce to Istanbul button//
+      //<!-- start -->
+      const ist_b = document.createElement('div');
+      ist_b.className = 'ol-control ol-unselectable ist';
+      ist_b.innerHTML = '<button title="Bounce to Istanbul">🇹🇷</button>';
+      ist_b.addEventListener('click',bounce_to_istanbul);
+      map.addControl(new ol.control.Control({
+        element: ist_b
+      }));
+      //<!-- end -->
+      
+      // Spin to Rome button//
+      //<!-- start -->
+      const rom_s_b = document.createElement('div');
+      rom_s_b.className = 'ol-control ol-unselectable rom_s';
+      rom_s_b.innerHTML = '<button title="Spin to Rome">🇮🇹</button>';
+      rom_s_b.addEventListener('click',spin_to_rome);
+      map.addControl(new ol.control.Control({
+        element: rom_s_b
+      }));
+      //<!-- end -->
+      
+      // Fly to Bern button//
+      //<!-- start -->
+      const ber_b = document.createElement('div');
+      ber_b.className = 'ol-control ol-unselectable ber';
+      ber_b.innerHTML = '<button title="Fly to Bern">🇨🇭</button>';
+      ber_b.addEventListener('click',fly_to_bern);
+      map.addControl(new ol.control.Control({
+        element: ber_b
+      }));
+      //<!-- end -->
+      
+      // Rotate around Rome button//
+      //<!-- start -->
+      const rom_r_b = document.createElement('div');
+      rom_r_b.className = 'ol-control ol-unselectable rom_r';
+      rom_r_b.innerHTML = '<button title="Rotate around Rome">🇮🇹</button>';
+      rom_r_b.addEventListener('click',rotate_around_rome);
+      map.addControl(new ol.control.Control({
+        element: rom_r_b
+      }));
+      //<!-- end -->
+      
+      // Jump to Mumbai button//
+      //<!-- start -->
+      const mum_b = document.createElement('div');
+      mum_b.className = 'ol-control ol-unselectable mum';
+      mum_b.innerHTML = '<button title="Jump to Mumbai">🏡</button>';
+      mum_b.addEventListener('click',elastic_to_mumbai);
+      map.addControl(new ol.control.Control({
+        element: mum_b
+      }));
+      //<!-- end -->
+      
+      
+      //***** Functions *****//
+      function locate_me(){
+        if (!source.isEmpty()) {
+          map.getView().fit(source.getExtent(), {
+            maxZoom: 12,
+            duration: 2000
+          });
+        }
+        console.log("click fired!");
+      }
+      
+      // A bounce easing method (from https://github.com/DmitryBaranovskiy/raphael).
+      function bounce(t) {
+        var s = 7.5625;
+        var p = 2.75;
+        var l;
+        if (t < (1 / p)) {
+          l = s * t * t;
+        } else {
+          if (t < (2 / p)) {
+            t -= (1.5 / p);
+            l = s * t * t + 0.75;
+          } else {
+            if (t < (2.5 / p)) {
+              t -= (2.25 / p);
+              l = s * t * t + 0.9375;
+            } else {
+              t -= (2.625 / p);
+              l = s * t * t + 0.984375;
+            }
+          }
+        }
+        return l;
+      }
+
+      // An elastic easing method (from https://github.com/DmitryBaranovskiy/raphael).
+      function elastic(t) {
+        return Math.pow(2, -10 * t) * Math.sin((t - 0.075) * (2 * Math.PI) / 0.3) + 1;
+      }
+      
+      // Tour 
+      function tour() {
+        alert('Starting tour!');
+        var locations = [london, bern, rome, moscow, istanbul,mumbai];
+        var location_names = ["London","Bern","Rome","Moscow","Istanbul","Mumbai"];
+        var index = -1;
+        function next(more) {
+          if (more) {
+            ++index;
+            if (index < locations.length) {
+              var delay = index === 0 ? 0 : 750;
+              setTimeout(function() {
+                flyTo(locations[index], next);                
+              }, delay);
+              alert('Going to '+location_names[index]);
+            } else {
+              alert('Tour complete!\nCities:London, Bern, Rome, Moscow, Istanbul, Mumbai');
+            }
+          } else {
+            alert('Tour cancelled');
+          }
+        }
+        next(true);
+      }
+      
+      // Fly to
+      function flyTo(location, done) {
+        var duration = 2000;
+        var zoom = view.getZoom();
+        var parts = 2;
+        var called = false;
+        function callback(complete) {
+          --parts;
+          if (called) {
+            return;
+          }
+          if (parts === 0 || !complete) {
+            called = true;
+            done(complete);
+          }
+        }
+        view.animate({
+          center: location,
+          duration: duration
+        }, callback);
+        view.animate({
+          zoom: zoom - 1,
+          duration: duration / 2
+        }, {
+          zoom: zoom,
+          duration: duration / 2
+        }, callback);
+      }
+      
+      function rotate_clockwise(){
+        view.animate({
+          rotation: view.getRotation() + Math.PI / 2
+        });
+      }
+      
+      function rotate_counterclockwise(){
+        view.animate({
+          rotation: view.getRotation() - Math.PI / 2
+        });
+      }
+      
+      function pan_to_london(){
+        view.animate({
+          center: london,
+          duration: 2000
+        });
+      }
+      
+      function elastic_to_moscow(){
+        view.animate({
+          center: moscow,
+          duration: 2000,
+          easing: elastic
+        });
+      }
+      
+      function bounce_to_istanbul(){
+        view.animate({
+          center: istanbul,
+          duration: 2000,
+          easing: bounce
+        });
+      }
+      
+      function spin_to_rome(){
+        // Rotation animation takes the shortest arc, so animate in two parts
+        var center = view.getCenter();
+        view.animate({
+          center: [
+            center[0] + (rome[0] - center[0]) / 2,
+            center[1] + (rome[1] - center[1]) / 2
+          ],
+          rotation: Math.PI,
+          easing: ol.easing.easeIn
+        }, {
+          center: rome,
+          rotation: 2 * Math.PI,
+          easing: ol.easing.easeOut
+        });
+      }
+      
+      function fly_to_bern(){
+        flyTo(bern, function() {});
+      }
+      
+      function rotate_around_rome(){
+        // Rotation animation takes the shortest arc, so animate in two parts
+        var rotation = view.getRotation();
+        view.animate({
+          rotation: rotation + Math.PI,
+          anchor: rome,
+          easing: ol.easing.easeIn
+        }, {
+          rotation: rotation + 2 * Math.PI,
+          anchor: rome,
+          easing: ol.easing.easeOut
+        });
+      }
+      
+      function elastic_to_mumbai(){
+        view.animate({
+          center: mumbai,
+          duration: 2000,
+          easing: elastic
+        });
+      }
+      
+    </script>
+    <script>
+    // <!-- Register service worker. --->
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then((reg) => {
+              console.log('Service worker registered.', reg);
+            });
+      });
+    }
+  </script>
+  </body>
+</html>
