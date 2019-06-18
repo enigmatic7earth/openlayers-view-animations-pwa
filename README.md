@@ -1,4 +1,4 @@
-OpenLayers View Animations PWA
+# <img src="https://github.com/enigmatic7earth/openlayers-view-animations-pwa/blob/master/public/images/icons/icon-128x128.png" width="48"> OpenLayers View Animations PWA
 =================
 
 A progressive web app made with [Glitch](https://glitch.com/) and [OpenLayers](https://openlayers.org/) by [Prashant](https://glitch.com/@enigmatic7earth). The app can track the user's location (if permission is granted). The app also features custom OpenLayer controls.
