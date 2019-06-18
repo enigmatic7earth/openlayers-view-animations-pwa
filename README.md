@@ -5,16 +5,18 @@ A progressive web app made with [Glitch](https://glitch.com/) and [OpenLayers](h
 
 Custom OpenLayers Controls
 ---
-1. ↻ Rotate the map clockwise
-2. ↺ Rotate the map anticlockwise
-3. 𝐓 Take a short tour
-4. 🇬🇧 Go to London with a panning effect
-5. 🇷🇺 Go to Moscow with an elatic effect
-6. 🇹🇷 Go to Istanbul with a bouncing effect
-7. 🇮🇹 Go to Rome with a spinning effect
-8. 🇨🇭 Got to Bern with a flying effect
-9. 🇮🇹 Rotate the map with the center as Rome
-10. 🏡 Go to Mumbai with an elastic effect
+
+1. ◎ Location  
+2. ↻ Rotate the map clockwise
+3. ↺ Rotate the map anticlockwise
+4. 𝐓 Take a short tour
+5. 🇬🇧 Go to London with a panning effect
+6. 🇷🇺 Go to Moscow with an elatic effect
+7. 🇹🇷 Go to Istanbul with a bouncing effect
+8. 🇮🇹 Go to Rome with a spinning effect
+9. 🇨🇭 Got to Bern with a flying effect
+10. 🇮🇹 Rotate the map with the center as Rome
+11. 🏡 Go to Mumbai with an elastic effect
 
 Screenshot
 ---
